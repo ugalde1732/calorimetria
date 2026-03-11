@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laboratorio Virtual de Calorimetría con Informe PDF</title>
+
+  <style>
+    :root{
+      --azul:#123a63;
+      --azul2:#1f5d99;
+      --gris:#f4f7fb;
+      --borde:#d7dee8;
+      --texto:#1d2a35;
+      --verde:#1c7c54;
+      --rojo:#b23a48;
+      --naranja:#b86b00;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--texto);
+      background:var(--gris);
+    }
+
+    header{
+      background:linear-gradient(135deg,var(--azul),var(--azul2));
+      color:white;
+      padding:32px 20px;
+      text-align:center;
+      border-bottom:6px solid #0d2742;
+    }
+
+    header h1{
+      margin:0 0 8px 0;
+      font-size:32px;
+    }
+
+    header p{
+      margin:4px 0;
+      font-size:16px;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:24px auto;
+      padding:0 16px 40px;
+    }
+
+    .card{
+      background:white;
+      border:1px solid var(--borde);
+      border-radius:14px;
+      padding:22px;
+      margin-bottom:20px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    h2{
+      margin-top:0;
+      color:var(--azul);
+      font-size:24px;
+      border-bottom:2px solid #e8eef5;
+      padding-bottom:8px;
+    }
+
+    h3{
+      color:var(--azul2);
+      margin-bottom:8px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:16px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    label{
+      display:block;
+      font-weight:bold;
+      margin-bottom:6px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #c7d2df;
+      border-radius:8px;
+      font-size:14px;
+      background:#fff;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+      line-height:1.5;
+    }
+
+    .textarea-small{
+      min-height:90px;
+    }
+
+    .btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    button{
+      background:var(--azul2);
+      color:white;
+      border:none;
+      padding:11px 16px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:bold;
+    }
+
+    button:hover{
+      opacity:.92;
+    }
+
+    .btn-secondary{
+      background:#5a6c7d;
+    }
+
+    .btn-success{
+      background:var(--verde);
+    }
+
+    .btn-danger{
+      background:var(--rojo);
+    }
+
+    .btn-orange{
+      background:var(--naranja);
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .result-box{
+      border:1px solid var(--borde);
+      border-left:6px solid var(--azul2);
+      border-radius:10px;
+      padding:12px;
+      background:#fbfdff;
+    }
+
+    .result-box strong{
+      display:block;
+      color:var(--azul);
+      margin-bottom:6px;
+    }
+
+    canvas{
+      width:100%;
+      max-width:100%;
+      background:white;
+      border:1px solid var(--borde);
+      border-radius:12px;
+      padding:8px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:14px;
+      font-size:14px;
+      background:white;
+    }
+
+    th, td{
+      border:1px solid #dbe3ec;
+      padding:8px 10px;
+      text-align:center;
+      vertical-align:top;
+    }
+
+    th{
+      background:#eaf2fb;
+      color:#163957;
+    }
+
+    .note{
+      background:#f8fbff;
+      border-left:5px solid var(--azul2);
+      padding:12px;
+      border-radius:8px;
+      line-height:1.6;
+    }
+
+    .small{
+      font-size:13px;
+      color:#5d6b78;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:20px;
+    }
+
+    .report-section{
+      margin-top:18px;
+      padding-top:10px;
+      border-top:1px solid #e8eef5;
+    }
+
+    .tag{
+      display:inline-block;
+      background:#eaf2fb;
+      color:#123a63;
+      border:1px solid #cfdced;
+      padding:6px 10px;
+      border-radius:999px;
+      margin:4px 6px 0 0;
+      font-size:13px;
+    }
+
+    footer{
+      text-align:center;
+      color:#5b6670;
+      padding:20px;
+      font-size:13px;
+    }
+
+    .hidden-export{
+      position:absolute;
+      left:-99999px;
+      top:0;
+      width:1000px;
+      background:white;
+      color:black;
+      padding:30px;
+    }
+
+    .pdf-page h1,.pdf-page h2,.pdf-page h3{
+      color:#123a63;
+    }
+
+    .pdf-page table{
+      font-size:12px;
+    }
+
+    .pdf-meta{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .pdf-box{
+      border:1px solid #ccc;
+      padding:10px;
+      border-radius:8px;
+      background:#fafafa;
+    }
+
+    .pdf-text{
+      white-space:pre-wrap;
+      line-height:1.5;
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:10px;
+      background:#fff;
+      min-height:70px;
+    }
+
+    @media (max-width:900px){
+      .two-col,
+      .grid-2,
+      .pdf-meta{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Laboratorio Virtual de Calorimetría</h1>
+  <p>Simulación interactiva de combustión y transferencia de calor</p>
+  <p>Versión con informe editable y exportación a PDF</p>
+</header>
+
+<div class="container">
+
+  <section class="card">
+    <h2>1. Presentación de la actividad</h2>
+    <div class="note">
+      En esta simulación se modela el aumento de temperatura en un sistema calorimétrico a partir de la combustión de un combustible.
+      El estudiante debe ingresar los datos experimentales, ejecutar la simulación, analizar la tabla y la gráfica, completar el informe
+      y finalmente descargar el reporte en PDF con toda la información.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Datos del estudiante</h2>
+    <div class="grid">
+      <div>
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" type="text" placeholder="Escriba su nombre completo">
+      </div>
+      <div>
+        <label for="curso">Curso</label>
+        <input id="curso" type="text" placeholder="Ej. Química General">
+      </div>
+      <div>
+        <label for="grupo">Grupo</label>
+        <input id="grupo" type="text" placeholder="Ej. 10-2">
+      </div>
+      <div>
+        <label for="fecha">Fecha</label>
+        <input id="fecha" type="date">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Instrucciones para el estudiante</h2>
+    <ol>
+      <li>Complete sus datos personales.</li>
+      <li>Configure el experimento con los valores indicados.</li>
+      <li>Ejecute la simulación.</li>
+      <li>Revise la tabla de temperaturas generadas por segundo.</li>
+      <li>Analice la gráfica de temperatura vs. tiempo.</li>
+      <li>Complete todos los apartados del informe.</li>
+      <li>Descargue el informe en PDF.</li>
+    </ol>
+    <p class="small">
+      Nota: esta herramienta tiene fines didácticos. Los valores energéticos son aproximados y se emplean para modelación educativa.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>4. Configuración del experimento</h2>
+
+    <div class="two-col">
+      <div>
+        <div class="grid">
+          <div>
+            <label for="comb">Combustible</label>
+            <select id="comb">
+              <option value="44000">Octano (44 000 J/g)</option>
+              <option value="30000">Etanol (30 000 J/g)</option>
+              <option value="20000">Metanol (20 000 J/g)</option>
+              <option value="46000">Gasolina (46 000 J/g)</option>
+              <option value="38000">Biodiésel (38 000 J/g)</option>
+              <option value="49000">Butano (49 000 J/g)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="t0">Temperatura inicial (°C)</label>
+            <input id="t0" type="number" value="25" step="0.1">
+          </div>
+
+          <div>
+            <label for="masa">Masa del combustible (g)</label>
+            <input id="masa" type="number" value="1" step="0.01">
+          </div>
+
+          <div>
+            <label for="cagua">Capacidad calorífica del agua (J/g°C)</label>
+            <input id="cagua" type="number" value="4.18" step="0.01">
+          </div>
+
+          <div>
+            <label for="ccal">Capacidad calorífica del calorímetro (J/°C)</label>
+            <input id="ccal" type="number" value="900" step="0.01">
+          </div>
+
+          <div>
+            <label for="magua">Masa de agua (g)</label>
+            <input id="magua" type="number" value="2000" step="1">
+          </div>
+
+          <div>
+            <label for="duracion">Duración de la simulación (s)</label>
+            <input id="duracion" type="number" value="60" step="1" min="10" max="300">
+          </div>
+
+          <div>
+            <label for="modo">Modo de incremento térmico</label>
+            <select id="modo">
+              <option value="lineal">Lineal</option>
+              <option value="suave">Suave / progresivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button onclick="simular()">Ejecutar simulación</button>
+          <button class="btn-secondary" onclick="limpiar()">Limpiar datos</button>
+          <button class="btn-success" onclick="descargarCSV()">Descargar CSV</button>
+          <button class="btn-orange" onclick="descargarPDF()">Descargar informe en PDF</button>
+        </div>
+      </div>
+
+      <div>
+        <h3>Modelo utilizado</h3>
+        <div class="note">
+          <strong>Q = m · poder energético</strong><br>
+          <strong>C = C<sub>cal</sub> + (c<sub>agua</sub> · m<sub>agua</sub>)</strong><br>
+          <strong>ΔT = Q / C</strong><br><br>
+          Luego, el incremento térmico se distribuye segundo a segundo para generar la curva de temperatura.
+        </div>
+
+        <div class="report-section">
+          <span class="tag">Temperatura inicial</span>
+          <span class="tag">Tabla por segundo</span>
+          <span class="tag">Gráfico automático</span>
+          <span class="tag">Informe editable</span>
+          <span class="tag">Exportación PDF</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="result-box">
+        <strong>Energía liberada (J)</strong>
+        <span id="resEnergia">—</span>
+      </div>
+      <div class="result-box">
+        <strong>Capacidad calorífica total (J/°C)</strong>
+        <span id="resCapacidad">—</span>
+      </div>
+      <div class="result-box">
+        <strong>ΔT total (°C)</strong>
+        <span id="resDeltaT">—</span>
+      </div>
+      <div class="result-box">
+        <strong>Temperatura final (°C)</strong>
+        <span id="resTf">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Gráfica de temperatura vs. tiempo</h2>
+    <canvas id="grafico" width="1000" height="420"></canvas>
+  </section>
+
+  <section class="card">
+    <h2>6. Datos generados</h2>
+    <div style="max-height:420px; overflow:auto;">
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>Tiempo (s)</th>
+            <th>Temperatura (°C)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Informe del estudiante</h2>
+
+    <div class="grid-2">
+      <div>
+        <label for="objetivo">1. Objetivo general</label>
+        <textarea id="objetivo" placeholder="Describa qué se desea determinar con la simulación."></textarea>
+      </div>
+
+      <div>
+        <label for="hipotesis">2. Hipótesis</label>
+        <textarea id="hipotesis" placeholder="Plantee una predicción sobre el efecto del combustible o de la masa."></textarea>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <label for="conocimientos">3. Conocimientos previos</label>
+      <textarea id="conocimientos" placeholder="Explique calor, capacidad calorífica y transferencia térmica."></textarea>
+    </div>
+
+    <div class="report-section">
+      <label for="procedimiento">4. Procedimiento</label>
+      <textarea id="procedimiento" placeholder="Describa los pasos realizados en la plataforma."></textarea>
+    </div>
+
+    <div class="report-section">
+      <label for="resultadosTexto">5. Resultados</label>
+      <textarea id="resultadosTexto" placeholder="Incluya la interpretación de la tabla, la gráfica y los resultados obtenidos."></textarea>
+    </div>
+
+    <div class="report-section">
+      <label for="conclusiones">6. Conclusiones</label>
+      <textarea id="conclusiones" placeholder="Redacte al menos tres conclusiones científicas."></textarea>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Simulación educativa de calorimetría · Archivo HTML ejecutable en navegador · Uso académico
+</footer>
+
+<div id="pdfExport" class="hidden-export"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script>
+  let datosSimulados = [];
+
+  function formatear(num, dec=2){
+    return Number(num).toFixed(dec);
+  }
+
+  function obtenerNombreCombustible(){
+    const select = document.getElementById("comb");
+    return select.options[select.selectedIndex].text;
+  }
+
+  function simular(){
+    const energiaComb = parseFloat(document.getElementById("comb").value);
+    const t0 = parseFloat(document.getElementById("t0").value);
+    const masa = parseFloat(document.getElementById("masa").value);
+    const cagua = parseFloat(document.getElementById("cagua").value);
+    const ccal = parseFloat(document.getElementById("ccal").value);
+    const magua = parseFloat(document.getElementById("magua").value);
+    const duracion = parseInt(document.getElementById("duracion").value);
+    const modo = document.getElementById("modo").value;
+
+    if ([energiaComb, t0, masa, cagua, ccal, magua, duracion].some(v => isNaN(v))) {
+      alert("Por favor, complete todos los campos numéricos.");
+      return;
+    }
+
+    if (masa <= 0 || cagua <= 0 || ccal <= 0 || magua <= 0 || duracion <= 0) {
+      alert("Todos los valores deben ser mayores que cero.");
+      return;
+    }
+
+    const energia = energiaComb * masa;
+    const C = ccal + (cagua * magua);
+    const deltaT = energia / C;
+    const tf = t0 + deltaT;
+
+    document.getElementById("resEnergia").textContent = formatear(energia,2);
+    document.getElementById("resCapacidad").textContent = formatear(C,2);
+    document.getElementById("resDeltaT").textContent = formatear(deltaT,2);
+    document.getElementById("resTf").textContent = formatear(tf,2);
+
+    datosSimulados = [];
+    const tbody = document.querySelector("#tabla tbody");
+    tbody.innerHTML = "";
+
+    for(let i = 0; i <= duracion; i++){
+      let progreso = i / duracion;
+      let fraccion;
+
+      if(modo === "suave"){
+        fraccion = 1 - Math.exp(-3 * progreso);
+        fraccion = fraccion / (1 - Math.exp(-3));
+      } else {
+        fraccion = progreso;
+      }
+
+      const temp = t0 + deltaT * fraccion;
+      datosSimulados.push({tiempo:i, temperatura:temp});
+
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${i}</td>
+        <td>${formatear(temp,2)}</td>
+      `;
+      tbody.appendChild(fila);
+    }
+
+    dibujarGrafico(datosSimulados);
+  }
+
+  function dibujarGrafico(datos){
+    const canvas = document.getElementById("grafico");
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0,0,w,h);
+
+    const margenIzq = 70;
+    const margenDer = 30;
+    const margenSup = 30;
+    const margenInf = 50;
+
+    const areaW = w - margenIzq - margenDer;
+    const areaH = h - margenSup - margenInf;
+
+    const tiempos = datos.map(d => d.tiempo);
+    const temps = datos.map(d => d.temperatura);
+
+    const minX = Math.min(...tiempos);
+    const maxX = Math.max(...tiempos);
+    const minY = Math.min(...temps);
+    const maxY = Math.max(...temps);
+
+    const yPad = Math.max(1, (maxY - minY) * 0.15);
+    const y0 = minY - yPad;
+    const y1 = maxY + yPad;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0,0,w,h);
+
+    ctx.strokeStyle = "#c7d4e2";
+    ctx.lineWidth = 1;
+
+    for(let i=0;i<=5;i++){
+      const y = margenSup + (areaH/5)*i;
+      ctx.beginPath();
+      ctx.moveTo(margenIzq, y);
+      ctx.lineTo(w - margenDer, y);
+      ctx.stroke();
+    }
+
+    for(let i=0;i<=6;i++){
+      const x = margenIzq + (areaW/6)*i;
+      ctx.beginPath();
+      ctx.moveTo(x, margenSup);
+      ctx.lineTo(x, h - margenInf);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "#163957";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margenIzq, margenSup);
+    ctx.lineTo(margenIzq, h - margenInf);
+    ctx.lineTo(w - margenDer, h - margenInf);
+    ctx.stroke();
+
+    ctx.fillStyle = "#163957";
+    ctx.font = "14px Arial";
+
+    for(let i=0;i<=5;i++){
+      const valor = y1 - ((y1-y0)/5)*i;
+      const y = margenSup + (areaH/5)*i + 4;
+      ctx.fillText(formatear(valor,1), 12, y);
+    }
+
+    for(let i=0;i<=6;i++){
+      const valor = minX + ((maxX-minX)/6)*i;
+      const x = margenIzq + (areaW/6)*i - 8;
+      ctx.fillText(Math.round(valor), x, h - 20);
+    }
+
+    ctx.save();
+    ctx.translate(20, h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText("Temperatura (°C)", 0, 0);
+    ctx.restore();
+
+    ctx.fillText("Tiempo (s)", w/2 - 30, h - 10);
+
+    ctx.strokeStyle = "#1f5d99";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    datos.forEach((d, idx) => {
+      const x = margenIzq + ((d.tiempo - minX)/(maxX-minX || 1))*areaW;
+      const y = margenSup + (1 - ((d.temperatura - y0)/(y1-y0 || 1))) * areaH;
+
+      if(idx === 0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+
+    ctx.stroke();
+
+    ctx.fillStyle = "#c0392b";
+    datos.forEach((d, idx) => {
+      if(idx % Math.ceil(datos.length/12) === 0 || idx === datos.length-1){
+        const x = margenIzq + ((d.tiempo - minX)/(maxX-minX || 1))*areaW;
+        const y = margenSup + (1 - ((d.temperatura - y0)/(y1-y0 || 1))) * areaH;
+        ctx.beginPath();
+        ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fill();
+      }
+    });
+
+    ctx.fillStyle = "#163957";
+    ctx.font = "bold 16px Arial";
+    ctx.fillText("Gráfica de temperatura vs. tiempo", margenIzq, 20);
+  }
+
+  function descargarCSV(){
+    if(!datosSimulados.length){
+      alert("Primero debe ejecutar la simulación.");
+      return;
+    }
+
+    const nombreComb = obtenerNombreCombustible();
+    let csv = "Combustible," + nombreComb + "\n";
+    csv += "Tiempo (s),Temperatura (°C)\n";
+
+    datosSimulados.forEach(d => {
+      csv += `${d.tiempo},${formatear(d.temperatura,2)}\n`;
+    });
+
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "datos_calorimetria.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function limpiar(){
+    document.querySelector("#tabla tbody").innerHTML = "";
+    document.getElementById("resEnergia").textContent = "—";
+    document.getElementById("resCapacidad").textContent = "—";
+    document.getElementById("resDeltaT").textContent = "—";
+    document.getElementById("resTf").textContent = "—";
+    datosSimulados = [];
+
+    const canvas = document.getElementById("grafico");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+
+  function construirTablaPDF(){
+    if(!datosSimulados.length){
+      return "<p>No se han generado datos de simulación.</p>";
+    }
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>Tiempo (s)</th>
+            <th>Temperatura (°C)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    datosSimulados.forEach(d=>{
+      html += `
+        <tr>
+          <td>${d.tiempo}</td>
+          <td>${formatear(d.temperatura,2)}</td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody></table>";
+    return html;
+  }
+
+  async function descargarPDF(){
+    if(!datosSimulados.length){
+      alert("Primero debe ejecutar la simulación para poder generar el informe en PDF.");
+      return;
+    }
+
+    const nombre = document.getElementById("nombre").value || "No indicado";
+    const curso = document.getElementById("curso").value || "No indicado";
+    const grupo = document.getElementById("grupo").value || "No indicado";
+    const fecha = document.getElementById("fecha").value || "No indicada";
+
+    const combustible = obtenerNombreCombustible();
+    const t0 = document.getElementById("t0").value;
+    const masa = document.getElementById("masa").value;
+    const cagua = document.getElementById("cagua").value;
+    const ccal = document.getElementById("ccal").value;
+    const magua = document.getElementById("magua").value;
+    const duracion = document.getElementById("duracion").value;
+    const modo = document.getElementById("modo").value;
+
+    const objetivo = document.getElementById("objetivo").value || "No completado.";
+    const hipotesis = document.getElementById("hipotesis").value || "No completado.";
+    const conocimientos = document.getElementById("conocimientos").value || "No completado.";
+    const procedimiento = document.getElementById("procedimiento").value || "No completado.";
+    const resultadosTexto = document.getElementById("resultadosTexto").value || "No completado.";
+    const conclusiones = document.getElementById("conclusiones").value || "No completado.";
+
+    const graficoCanvas = document.getElementById("grafico");
+    const graficoImg = graficoCanvas.toDataURL("image/png");
+
+    const exportDiv = document.getElementById("pdfExport");
+    exportDiv.innerHTML = `
+      <div class="pdf-page">
+        <h1>Informe de laboratorio virtual de calorimetría</h1>
+        <h2>Datos del estudiante</h2>
+
+        <div class="pdf-meta">
+          <div class="pdf-box"><strong>Nombre:</strong><br>${escapeHTML(nombre)}</div>
+          <div class="pdf-box"><strong>Curso:</strong><br>${escapeHTML(curso)}</div>
+          <div class="pdf-box"><strong>Grupo:</strong><br>${escapeHTML(grupo)}</div>
+          <div class="pdf-box"><strong>Fecha:</strong><br>${escapeHTML(fecha)}</div>
+        </div>
+
+        <h2>Configuración del experimento</h2>
+        <table>
+          <tbody>
+            <tr><th>Combustible</th><td>${escapeHTML(combustible)}</td></tr>
+            <tr><th>Temperatura inicial (°C)</th><td>${escapeHTML(t0)}</td></tr>
+            <tr><th>Masa del combustible (g)</th><td>${escapeHTML(masa)}</td></tr>
+            <tr><th>Capacidad calorífica del agua (J/g°C)</th><td>${escapeHTML(cagua)}</td></tr>
+            <tr><th>Capacidad calorífica del calorímetro (J/°C)</th><td>${escapeHTML(ccal)}</td></tr>
+            <tr><th>Masa de agua (g)</th><td>${escapeHTML(magua)}</td></tr>
+            <tr><th>Duración (s)</th><td>${escapeHTML(duracion)}</td></tr>
+            <tr><th>Modo</th><td>${escapeHTML(modo)}</td></tr>
+            <tr><th>Energía liberada (J)</th><td>${document.getElementById("resEnergia").textContent}</td></tr>
+            <tr><th>Capacidad calorífica total (J/°C)</th><td>${document.getElementById("resCapacidad").textContent}</td></tr>
+            <tr><th>ΔT total (°C)</th><td>${document.getElementById("resDeltaT").textContent}</td></tr>
+            <tr><th>Temperatura final (°C)</th><td>${document.getElementById("resTf").textContent}</td></tr>
+          </tbody>
+        </table>
+
+        <h2>1. Objetivo general</h2>
+        <div class="pdf-text">${escapeHTML(objetivo)}</div>
+
+        <h2>2. Hipótesis</h2>
+        <div class="pdf-text">${escapeHTML(hipotesis)}</div>
+
+        <h2>3. Conocimientos previos</h2>
+        <div class="pdf-text">${escapeHTML(conocimientos)}</div>
+
+        <h2>4. Procedimiento</h2>
+        <div class="pdf-text">${escapeHTML(procedimiento)}</div>
+
+        <h2>5. Resultados</h2>
+        <div class="pdf-text">${escapeHTML(resultadosTexto)}</div>
+
+        <h3>Gráfica de temperatura vs. tiempo</h3>
+        <img src="${graficoImg}" style="width:100%; border:1px solid #ccc; border-radius:8px;">
+
+        <h3>Tabla de datos</h3>
+        ${construirTablaPDF()}
+
+        <h2>6. Conclusiones</h2>
+        <div class="pdf-text">${escapeHTML(conclusiones)}</div>
+      </div>
+    `;
+
+    try{
+      const canvas = await html2canvas(exportDiv, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = pageWidth - 20;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 10;
+
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - 20);
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + 10;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - 20);
+      }
+
+      const nombreArchivo = (nombre.trim() || "estudiante").replace(/[^\w\s-]/g, "").replace(/\s+/g, "_");
+      pdf.save(`Informe_Calorimetria_${nombreArchivo}.pdf`);
+    }catch(error){
+      console.error(error);
+      alert("No fue posible generar el PDF. Verifique que abrió el archivo en un navegador moderno y que tiene conexión a internet para cargar las librerías.");
+    }
+  }
+
+  function escapeHTML(str){
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  window.onload = function(){
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth()+1).padStart(2,"0");
+    const dd = String(hoy.getDate()).padStart(2,"0");
+    document.getElementById("fecha").value = `${yyyy}-${mm}-${dd}`;
+    limpiar();
+  };
+</script>
+
+</body>
+</html>
